@@ -27,8 +27,8 @@ storage:
     mount_dir: /blob
 
 jobs:
-  - name: RS_CAP_market_baseline_0225_2036
-    sku: 1x32G4-V100
+  - name: RS_CAP_market_baseline_1gpu_0225_2036
+    sku: 1x32G1-V100
     mpi: true
     priority: high
     sla_tier: Premium
@@ -55,4 +55,4 @@ jobs:
       - python train_cap.py
         --target=Market1501
         --data_dir=/blob/tuts/data/market1501/Market-1501-v15.09.15
-        --logs_dir=/blob/tuts/work_dirs/CAP_reid/logs/RS_CAP_market_baseline_0225_2036
+        --logs_dir=/blob/tuts/work_dirs/CAP_reid/logs/RS_CAP_market_baseline_1gpu_0225_2036

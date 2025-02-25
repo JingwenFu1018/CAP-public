@@ -1,0 +1,58 @@
+description: arcreid
+
+#sing
+target:
+  service: sing
+  name: msrresrchlab
+  workspace_name: facevcws
+
+environment:
+  registry: singularitybase.azurecr.io
+  image: base/job/pytorch/acpt-2.2.1-py3.10-cuda12.1:20240312T225111416  # pytorch 2.2.1, cuda 12.1, python 3.10
+
+
+code:
+  local_dir: $CONFIG_DIR/../
+
+# storage:
+#     openseg_blob:
+#         storage_account_name: openseg
+#         container_name: openseg-aml
+#         mount_dir: /openseg_blob
+
+storage:
+  my_storage:
+    storage_account_name: facevcstandard
+    container_name: v-qixiuli
+    mount_dir: /blob
+
+jobs:
+  - name: RS_CAP_market_baseline_0225_2036
+    sku: 1x32G4-V100
+    mpi: true
+    priority: high
+    sla_tier: Premium
+    execution_mode: basic
+    azml_int: True
+    process_count_per_node: 1
+    identity: managed
+    submit_args:
+      env:
+        _AZUREML_SINGULARITY_JOB_UAI: /subscriptions/2383bd50-2ae6-4fed-8d67-b699097f8e10/resourcegroups/facevc/providers/Microsoft.ManagedIdentity/userAssignedIdentities/facevc-uami 
+    command:
+      - pwd
+      - ls
+      - echo "------------------------------------------------------ device information"
+      - ls /usr/local/
+      - pip list
+      - echo "------------------------------------------------------ install_apps"
+      - pip install scikit-learn
+      - pip install einops
+      - pip install faiss_gpu
+      - pip install numpy==1.23.5
+      - echo "install complete----------------------------------------------"
+      - nvidia-smi
+      - python train_cap.py
+        --target=Market1501
+        --data_dir=/blob/tuts/data/market1501/Market-1501-v15.09.15
+        --logs_dir=/blob/tuts/work_dirs/CAP_reid/logs/RS_CAP_market_baseline_0225_2036

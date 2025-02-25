@@ -18,5 +18,20 @@
             ],
             "env": {"CUDA_VISIBLE_DEVICES": "0"},
         },
+        {
+            "name": "train_cap_arcresnet",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/cluster/home1/pyf/code/fjw_code/CAP-master/train_cap.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--target=Market1501",
+                "--arch=arcresnet50",
+                "--data_dir=/cluster/sata9/pyf/fjw_code/ca-jaccard/data/market1501/Market-1501-v15.09.15",
+                "--logs_dir=/cluster/sata9/pyf/fjw_code/CAP/logs/cap_baseline_debug",
+                "--base-dir=/cluster/sata9/pyf/fjw_code/ca-jaccard",
+            ],
+            "env": {"CUDA_VISIBLE_DEVICES": "0"},
+        },
     ]
 }

@@ -40,12 +40,13 @@ class Trainer(object):
                 inputs = next(target_iter)
 
             ### Target inputs
-            inputs_target = inputs[0].to(self.device)
-            index_target = inputs[3].to(self.device)
-            cam_target = inputs[4].to(self.device)
+            inputs_target = inputs[0].to(self.device)  # torch.Size([32, 3, 256, 128])
+            index_target = inputs[3].to(self.device) # torch.Size([32])
+            cam_target = inputs[4].to(self.device) # torch.Size([32])
 
             # Target loss
-            _, embed_feat = self.model(inputs_target)
+            # _, embed_feat = self.model(inputs_target) #embed_feat: torch.Size([32, 2048])
+            embed_feat = self.model(inputs_target) 
             loss = self.model_inv(embed_feat, index_target, cam_target, epoch=epoch, all_pseudo_label=all_pseudo_label,
                     batch_ind=batch_ind, init_intra_id_feat=init_intra_id_feat)
 

@@ -65,13 +65,13 @@ def update_train_loader(dataset, train_samples, updated_label, height, width, ba
                              std=[0.229, 0.224, 0.225])
 
     train_transformer = T.Compose([
-             T.Resize((height, width), interpolation=3),
-             T.RandomHorizontalFlip(p=0.5),
-             T.Pad(10),
-             T.RandomCrop((height, width)),
-             T.ToTensor(),
-             normalizer,
-             T.RandomErasing(EPSILON=re)
+        T.Resize((height, width), interpolation=3),
+        T.RandomHorizontalFlip(p=0.5),
+        T.Pad(10),
+        T.RandomCrop((height, width)),
+        T.ToTensor(),
+        normalizer,
+        T.RandomErasing(EPSILON=re)
          ])
 
     # obtain global accumulated label from pseudo label and cameras
@@ -186,6 +186,25 @@ def test_model(model, query_loader, gallery_loader):
 
     return result.mAP, result.CMC[0], result.CMC[4], result.CMC[9], result.CMC[19]
 
+def create_model(args):
+    if "arc" in args.arch:
+        model = models.create(args.arch, num_features=args.features, norm=True, dropout=args.dropout,
+                              num_classes=0, pooling_type=args.pooling_type,
+                              replace=[
+                                  ['x'],
+                                  ['0', '1', '2', '3'],
+                                  ['0', '1', '2', '3', '4', '5'],
+                                  ['0', '1', '2']
+                              ],
+                              kernel_number=8,
+                              base_dir=args.base_dir,
+                              )
+    else:
+        model = stb_net.MemoryBankModel(out_dim=2048, use_bnneck=args.use_bnneck)
+    # use CUDA
+    model.cuda()
+    model = nn.DataParallel(model)
+    return model
 
 
 def main(args):
@@ -205,13 +224,14 @@ def main(args):
         args.data_dir, args.target, args.height, args.width, args.batch_size, args.re, args.workers)
 
     # Create model
-    model = stb_net.MemoryBankModel(out_dim=2048, use_bnneck=args.use_bnneck)
+    # model = stb_net.MemoryBankModel(out_dim=2048, use_bnneck=args.use_bnneck)
+    model = create_model(args)
 
     # Create memory bank
     cap_memory = CAPMemory(beta=args.inv_beta, alpha=args.inv_alpha, all_img_cams=dataset.target_train_all_img_cams)
 
     # Set model
-    model = nn.DataParallel(model.to(device))
+    # model = nn.DataParallel(model.to(device))
     cap_memory = cap_memory.to(device)
 
     # Load from checkpoint
@@ -313,10 +333,13 @@ if __name__ == '__main__':
     parser.add_argument('--data_dir', type=str, metavar='PATH', default=osp.join(working_dir, 'data'))
     parser.add_argument('--logs_dir', type=str, metavar='PATH', default=osp.join(working_dir, 'logs'))
     parser.add_argument('--load_ckpt', type=str, default='')
+    parser.add_argument('--base-dir', type=str)
     # loss learning
     parser.add_argument('--inv_alpha', type=float, default=0.2, help='update rate for the memory')
     parser.add_argument('--inv_beta', type=float, default=0.07, help='temperature for contrastive loss')
     parser.add_argument('--thresh', type=int, default=0.5, help='threshold for clustering')
+
+    parser.add_argument('--pooling-type', type=str, default='avg')
     args = parser.parse_args()
 
     args.load_ckpt = ''  

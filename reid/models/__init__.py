@@ -1,6 +1,8 @@
 from __future__ import absolute_import
 
 from .resnet import *
+from .arc_resnet import arcresnet50
+from .arc_resnet_FJW import arcresnet50_FJW
 
 __factory = {
     'resnet18': resnet18,
@@ -10,6 +12,8 @@ __factory = {
     'resnet152': resnet152,
     'resnetV2': ResNetV2,  # new added
     'resnetV3': ResNetV3,  # new added
+    'arcresnet50': arcresnet50,
+    'arcresnet50_FJW': arcresnet50_FJW,
 }
 
 

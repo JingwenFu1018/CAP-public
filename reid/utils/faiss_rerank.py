@@ -25,7 +25,7 @@ def k_reciprocal_neigh(initial_rank, i, k1):
     fi = np.where(backward_k_neigh_index==i)[0]
     return forward_k_neigh_index[fi]
 
-def faiss_compute_jaccard_dist(target_features, k1=20, k2=6, print_flag=True, search_option=0, use_float16=False):
+def faiss_compute_jaccard_dist(target_features, k1=20, k2=6, print_flag=True, search_option=3, use_float16=False):
     end = time.time()
     if print_flag:
         print('Computing jaccard distance...')

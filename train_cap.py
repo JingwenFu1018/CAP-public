@@ -251,7 +251,7 @@ def main(args):
 
     # Start training
     for epoch in range(args.epochs):
-        lr_scheduler.step(epoch)
+        lr_scheduler.step()
 
         # image grouping
         print('Epoch {} image grouping:'.format(epoch))
@@ -323,6 +323,5 @@ if __name__ == '__main__':
     args.evaluate = False
     args.use_bnneck = True
     main(args)
-
     # CUDA_VISIBLE_DEVICES=0 python train_cap.py --target 'VeRi' --data_dir '/home/xxx/folder/dataset' --logs_dir 'VeRi_logs'
 

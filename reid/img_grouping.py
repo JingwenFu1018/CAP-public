@@ -1,7 +1,8 @@
 import torch
 import numpy as np
 from scipy.spatial.distance import pdist, cdist, squareform
-from sklearn.cluster.dbscan_ import dbscan
+# from sklearn.cluster.dbscan_ import dbscan
+from sklearn.cluster import DBSCAN
 from sklearn.cluster import KMeans
 from reid.utils.rerank import compute_jaccard_dist
 from reid.utils.faiss_rerank import faiss_compute_jaccard_dist
@@ -57,7 +58,9 @@ def img_association(network, propagate_loader, min_sample=4, eps=0,
 
     # self-similarity for association
     print('  perform image grouping...')
-    _, updated_label = dbscan(W, eps=eps, min_samples=min_sample, metric='precomputed', n_jobs=8)
+    # _, updated_label = DBSCAN(W, eps=0.5, min_samples=min_sample, metric='precomputed', n_jobs=8)
+    db = DBSCAN(eps=0.5, min_samples=min_sample, metric='precomputed', n_jobs=8)  # 先创建 DBSCAN 对象
+    updated_label = db.fit_predict(W)
     print('  eps in cluster: {:.3f}'.format(eps))
     print('  updated_label: num_class= {}, {}/{} images are associated.'
           .format(updated_label.max() + 1, len(updated_label[updated_label >= 0]), len(updated_label)))

@@ -1,0 +1,22 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "train_cap_baseline",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "/cluster/home1/pyf/code/fjw_code/CAP-master/train_cap.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--target=Market1501",
+                "--data_dir=/cluster/sata9/pyf/fjw_code/ca-jaccard/data/market1501/Market-1501-v15.09.15",
+                "--logs_dir=/cluster/sata9/pyf/fjw_code/CAP/logs/cap_baseline_debug",
+            ],
+            "env": {"CUDA_VISIBLE_DEVICES": "0"},
+        },
+    ]
+}

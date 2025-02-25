@@ -9,26 +9,59 @@ import math
 torch.autograd.set_detect_anomaly(True)
 
 
-class ExemplarMemory(Function):
+# class ExemplarMemory(Function):
+#     def __init__(self, em, alpha=0.01):
+#         super(ExemplarMemory, self).__init__()
+#         self.em = em
+#         self.alpha = alpha
+
+#     def forward(self, inputs, targets):
+#         self.save_for_backward(inputs, targets)
+#         outputs = inputs.mm(self.em.t())
+#         return outputs
+
+#     def backward(self, grad_outputs):
+#         inputs, targets = self.saved_tensors
+#         grad_inputs = None
+#         if self.needs_input_grad[0]:
+#             grad_inputs = grad_outputs.mm(self.em)
+#         for x, y in zip(inputs, targets):
+#             self.em[y] = self.alpha * self.em[y] + (1.0 - self.alpha) * x
+#             self.em[y] /= self.em[y].norm()
+#         return grad_inputs, None
+
+class ExemplarMemoryFunction(Function):
+    @staticmethod
+    def forward(ctx, inputs, targets, em, alpha):
+        ctx.save_for_backward(inputs, targets, em)
+        ctx.alpha = alpha
+        outputs = inputs.mm(em.t())  # 矩阵乘法
+        return outputs
+
+    @staticmethod
+    def backward(ctx, grad_outputs):
+        inputs, targets, em = ctx.saved_tensors
+        alpha = ctx.alpha
+
+        grad_inputs = None
+        if ctx.needs_input_grad[0]:  # 只计算需要梯度的部分
+            grad_inputs = grad_outputs.mm(em)
+
+        # 更新 `em
+        for x, y in zip(inputs, targets):
+            em[y] = alpha * em[y] + (1.0 - alpha) * x
+            em[y] /= em[y].norm()
+
+        return grad_inputs, None, None, None  # `None` 对应 `targets`, `em`, `alpha`
+
+class ExemplarMemory(nn.Module):
     def __init__(self, em, alpha=0.01):
         super(ExemplarMemory, self).__init__()
-        self.em = em
+        self.em = em  # 存储 exemplar memory
         self.alpha = alpha
 
     def forward(self, inputs, targets):
-        self.save_for_backward(inputs, targets)
-        outputs = inputs.mm(self.em.t())
-        return outputs
-
-    def backward(self, grad_outputs):
-        inputs, targets = self.saved_tensors
-        grad_inputs = None
-        if self.needs_input_grad[0]:
-            grad_inputs = grad_outputs.mm(self.em)
-        for x, y in zip(inputs, targets):
-            self.em[y] = self.alpha * self.em[y] + (1.0 - self.alpha) * x
-            self.em[y] /= self.em[y].norm()
-        return grad_inputs, None
+        return ExemplarMemoryFunction.apply(inputs, targets, self.em, self.alpha)
 
 
 class CAPMemory(nn.Module):

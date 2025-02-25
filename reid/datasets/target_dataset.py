@@ -11,7 +11,8 @@ class DA(object):
     def __init__(self, data_dir, target, generate_propagate_data=False):
 
         # target image root
-        self.target_images_dir = osp.join(data_dir, target)
+        # self.target_images_dir = osp.join(data_dir, target)
+        self.target_images_dir = data_dir
         # training image dir
         self.target_train_path = 'bounding_box_train'
         self.gallery_path = 'bounding_box_test'

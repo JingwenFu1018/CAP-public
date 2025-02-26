@@ -57,7 +57,7 @@ jobs:
   #       --data_dir=/blob/tuts/data/market1501/Market-1501-v15.09.15
   #       --logs_dir=/blob/tuts/work_dirs/CAP_reid/logs/RS_CAP_market_baseline_1gpu_0225_2036
 
-  - name: RS_CAP_market_arcresnet50_1gpu_0226_0007
+  - name: RS_CAP_market_arcresnet50_step4_0226_1631
     sku: 1x32G1-V100
     mpi: true
     priority: high
@@ -87,5 +87,5 @@ jobs:
         --arch=arcresnet50
         --base-dir=/blob/tuts/work_dirs/arc_reid
         --data_dir=/blob/tuts/data/market1501/Market-1501-v15.09.15
-        --logs_dir=/blob/tuts/work_dirs/CAP_reid/logs/RS_CAP_market_arcresnet50_1gpu_0226_0007
+        --logs_dir=/blob/tuts/work_dirs/CAP_reid/logs/RS_CAP_market_arcresnet50_step4_0226_1631
        

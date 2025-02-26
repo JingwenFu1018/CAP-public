@@ -289,7 +289,7 @@ def main(args):
                             init_intra_id_feat=init_intra_id_feat)
 
         # test
-        if (epoch+1)%10 == 0:
+        if (epoch+1)%4 == 0:
             print('Test with epoch {} model:'.format(epoch))
             eval_results = test_model(model, query_loader, gallery_loader)
             print('    rank1: %.4f, rank5: %.4f, rank10: %.4f, rank20: %.4f, mAP: %.4f'
